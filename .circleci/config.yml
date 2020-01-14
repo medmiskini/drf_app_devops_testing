@@ -22,11 +22,7 @@ jobs:
 
       - run:
           name: Deploying
-          command: |
-            sed -i'' -e "s;%BUILD_NUM%;$CIRCLE_BUILD_NUM;g" ./.deploy/Dockerrun.aws.json
-            cd .deploy && eb init -r us-east-1 medmiskini
-            cd .deploy && eb deploy -l $CIRCLE_BUILD_NUM
-  build:
+          command: eb deploy DrfCrudApp-env
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
@@ -72,19 +68,16 @@ jobs:
             . venv/bin/activate
             python manage.py test
 
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - store_artifacts:
           path: test-reports
           destination: test-reports
-
-      - run:
-          name: Build and push Docker image
-          command: |
-            docker build -t medmiskini/drf-crud:$CIRCLE_BUILD_NUM .
-            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
-            docker push medmiskini/drf-crud:$CIRCLE_BUILD_NUM
+#
+#      - run:
+#          name: Build and push Docker image
+#          command: |
+#            docker build -t medmiskini/drf-crud:$CIRCLE_BUILD_NUM .
+#            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+#            docker push medmiskini/drf-crud:$CIRCLE_BUILD_NUM
 
 workflows:
   version: 2
