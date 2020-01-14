@@ -4,6 +4,28 @@
 #
 version: 2
 jobs:
+  deploy:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/python:3.6.1
+    steps:
+      - checkout
+
+      - run:
+          name: Installing deployment dependencies
+          working_directory: /
+          command: |
+            sudo apt-get -y -qq update
+            sudo apt-get install python-pip python-dev build-essential
+            sudo pip install --upgrade setuptools
+            sudo pip install awsebcli --upgrade
+
+      - run:
+          name: Deploying
+          command: |
+            sed -i'' -e "s;%BUILD_NUM%;$CIRCLE_BUILD_NUM;g" ./.deploy/Dockerrun.aws.json
+            cd .deploy && eb init -r us-east-1 medmiskini
+            cd .deploy && eb deploy -l $CIRCLE_BUILD_NUM
   build:
     docker:
       # specify the version you desire here
@@ -53,3 +75,19 @@ jobs:
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+      - setup_remote_docker:
+          docker_layer_caching: true
+
+      - run:
+          name: Build and push Docker image
+          command: |
+            docker build -t medmiskini/drf-crud:$CIRCLE_BUILD_NUM .
+            echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
+            docker push medmiskini/drf-crud:$CIRCLE_BUILD_NUM
+
+      - deploy:
+          filters:
+            branches:
+              only:
+                - master

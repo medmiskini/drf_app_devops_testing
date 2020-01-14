@@ -1,0 +1,9 @@
+branch-defaults:
+  master:
+    environment: DrfCrudApp-env
+global:
+  application_name: drf-crud-app
+  default_ec2_keyname: drf-crud-app
+  default_platform: Docker running on 64bit Amazon Linux/2.14.0
+  default_region: us-east-1
+  sc: git
