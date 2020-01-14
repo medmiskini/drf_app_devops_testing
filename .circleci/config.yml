@@ -76,9 +76,6 @@ jobs:
           path: test-reports
           destination: test-reports
 
-      - setup_remote_docker:
-          docker_layer_caching: true
-
       - run:
           name: Build and push Docker image
           command: |
