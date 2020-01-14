@@ -29,7 +29,7 @@ jobs:
 
       - run:
           name: Deploying
-          command: eb deploy --profile default DrfCrudApp-env
+          command: eb deploy DrfCrudApp-env
   build:
     docker:
       # specify the version you desire here
