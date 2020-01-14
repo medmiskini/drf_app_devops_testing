@@ -1,6 +1,9 @@
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateDestroyAPIView, ListCreateAPIView
+from rest_framework.views import APIView
+
 from .models import Movie
 from .permissions import IsOwnerOrReadOnly, IsAuthenticated
 from .serializers import MovieSerializer
@@ -64,7 +67,8 @@ class get_delete_update_movie(RetrieveUpdateDestroyAPIView):
 
 class get_post_movies(ListCreateAPIView):
     serializer_class = MovieSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = []
+    authentication_classes = []
     pagination_class = CustomPagination
     
     def get_queryset(self):
@@ -82,7 +86,15 @@ class get_post_movies(ListCreateAPIView):
     def post(self, request):
         serializer = MovieSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(creator=request.user)
+            serializer.save(creator=User.objects.all()[0])
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
+class get_static_movies(APIView):
+    permission_classes = []
+    authentication_classes = []
+
+    def get(self, request, format=None):
+        movies = ["100", "Perfume", "Titanic", "the conjuring"]
+        return Response(movies)
