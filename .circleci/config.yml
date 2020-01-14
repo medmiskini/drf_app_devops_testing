@@ -72,6 +72,9 @@ jobs:
             . venv/bin/activate
             python manage.py test
 
+      - setup_remote_docker:
+          docker_layer_caching: true
+
       - store_artifacts:
           path: test-reports
           destination: test-reports
@@ -79,12 +82,6 @@ jobs:
       - run:
           name: Build and push Docker image
           command: |
-            echo "test"
-            curl -L -o /tmp/docker.tgz https://get.docker.com/builds/Linux/x86_64/docker-1.12.3.tgz
-            tar -xz -C /tmp -f /tmp/docker.tgz
-            mv /tmp/docker/docker* /usr/bin/
-            curl -L "https://github.com/docker/compose/releases/download/1.9.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/bin/docker-compose
-            chmod +x  /usr/bin/docker-compose
             docker build -t medmiskini/drf-crud:$CIRCLE_BUILD_NUM .
             echo $DOCKER_PWD | docker login -u $DOCKER_LOGIN --password-stdin
             docker push medmiskini/drf-crud:$CIRCLE_BUILD_NUM
