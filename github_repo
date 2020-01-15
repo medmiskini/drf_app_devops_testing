@@ -1,1 +1,10 @@
 https://github.com/JuanBenitez97/django-rest-framework-crud
+
+http://192.168.99.101:31000/api/v1/static_movies/
+
+#deploy canary
+- kubectl apply -f k8s-deployment-canary.yaml ( 3 pods in total giving canary 33% of traffic )
+- monitor ( see logs for instance )
+- modify deployment yaml to use v2 image
+- kubectl apply -f deployment.yaml
+- in case of roll back : kubectl delete -f k8s-deployment-canary.yaml

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drf-crud-canary
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drf-crud
+  template:
+    metadata:
+      labels:
+        app: drf-crud
+        track: canary
+    spec:
+      containers:
+        - name: drf-crud
+          imagePullPolicy: IfNotPresent
+          image: medmiskini/drf-crud:2.0
+          ports:
+          - containerPort: 8000

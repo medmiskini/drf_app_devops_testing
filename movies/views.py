@@ -96,5 +96,5 @@ class get_static_movies(APIView):
     authentication_classes = []
 
     def get(self, request, format=None):
-        movies = ["100", "Perfume", "Titanic", "the conjuring"]
+        movies = ["100", "Perfume", "Titanic", "the conjuring", "this is for canary"]
         return Response(movies)
